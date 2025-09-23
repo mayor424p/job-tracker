@@ -95,7 +95,7 @@ if 'RENDER' in os.environ:
             'NAME': os.environ.get('DB_NAME'),        # <-- From Render DB service
             'USER': os.environ.get('DB_USER'),        # <-- From Render DB service
             'PASSWORD': os.environ.get('DB_PASSWORD'),# <-- From Render DB service
-            'HOST': os.environ.get('postgres'),        # <-- From Render DB service
+            'HOST': ('postgres'),        # <-- From Render DB service
             'PORT': os.environ.get('DB_PORT', '5432'), # Default PostgreSQL port
              'OPTIONS': {
                 'sslmode': 'require', # Often required by Render
