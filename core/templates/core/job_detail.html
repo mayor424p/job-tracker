@@ -1,59 +1,7 @@
-<!-- core/templates/core/job_detail.html -->
+
 {% extends "core/base.html" %}
+{% load static %}
 {% block content %}
-<style>
-    /* --- Job Detail Specific Styles (Leveraging base theme) --- */
-    .job-detail-section {
-        margin-bottom: 1.5rem;
-    }
-    .job-detail-section .card-header {
-        font-weight: 600;
-        background-color: rgba(0, 0, 0, 0.05); /* Slightly darker header */
-        border-bottom: 1px solid var(--bs-border-color);
-    }
-    .detail-label {
-        font-weight: 500;
-        color: var(--bs-body-color); /* Ensure label text is correct color */
-    }
-    .detail-value {
-        color: var(--bs-body-color); /* Ensure value text is correct color */
-    }
-    .status-badge-lg {
-        font-size: 1rem;
-        padding: 0.5em 1em;
-        border-radius: 8px;
-    }
-    .history-item {
-        border-bottom: 1px solid var(--bs-border-color);
-        padding-bottom: 1rem;
-        margin-bottom: 1rem;
-    }
-    .history-item:last-child {
-        border-bottom: none;
-        margin-bottom: 0;
-        padding-bottom: 0;
-    }
-    .interview-table th {
-        background-color: rgba(0, 0, 0, 0.05);
-        color: var(--bs-body-color);
-        border-top: none;
-    }
-    .interview-table td {
-        color: var(--bs-body-color);
-        vertical-align: middle;
-    }
-    .table-hover tbody tr:hover {
-        background-color: rgba(255, 255, 255, 0.03); /* Subtle hover background */
-    }
-    .action-buttons .btn {
-        margin-bottom: 0.5rem;
-    }
-    @media (min-width: 768px) {
-        .action-buttons .btn {
-            margin-bottom: 0;
-        }
-    }
-</style>
 
 <div class="container py-4">
     <!-- Job Overview Card -->

@@ -1,0 +1,397 @@
+
+        :root{
+            --bs-body-bg: #121212; /* Main dark background */
+            --bs-body-color: #e0e0e0; /* Light text color */
+            --bs-card-bg: #1e1e1e; /* Slightly lighter card background */
+            --bs-card-border-color: #333; /* Darker border for cards */
+            --bs-primary: #bb86fc; /* Primary color (purple) */
+            --bs-primary-rgb: 187, 134, 252;
+            --bs-primary-bg-subtle: #2c2342; /* Subtle primary background */
+            --bs-success: #03dac6; /* Success color (teal) */
+            --bs-success-rgb: 3, 218, 198;
+            --bs-danger: #cf6679; /* Danger color (pinkish) */
+            --bs-danger-rgb: 207, 102, 121;
+            --bs-info: #2196f3; /* Info color (blue) */
+            --bs-info-rgb: 33, 150, 243;
+            --bs-warning: #ffb300; /* Warning color (amber) */
+            --bs-warning-rgb: 255, 179, 0;
+            --bs-secondary: #9e9e9e; /* Secondary text/color */
+            --bs-secondary-rgb: 158, 158, 158;
+            --bs-tertiary-bg: #2a2a2a; /* Tertiary background (e.g., input fields) */
+            --bs-border-color: #333; /* General border color */
+            --bs-link-color: var(--bs-primary);
+            --bs-link-hover-color: #d0b0ff;
+
+        }
+
+        body{
+            background-color: var(--bs-body-bg);
+            color: var(--bs-body-color);
+            padding-bottom: 70px;
+
+        }
+        .card{
+            background-color: var(--bs-card-bg);
+            border: 1px solid var(--bs-card-border-color);
+            border-radius: 0.7rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+
+        }
+        .card-header{
+            background-color: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid var(--bs-border-color);
+            font-weight: 600;
+        }
+
+        .card-footer{
+            background-color: rgba(255, 255, 255, 0.03);
+            border-top: 1px solid var(--bs-card-border-color)
+        }
+
+        /*form style*/
+        .form-label{
+            color: var(--bs-body-color);
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+        }
+        .form-control, .form-select {
+            background-color: var(--bs-tertiary-bg);
+            color: var(--bs-body-color);
+            border: 1px solid  var(--bs-body-color) ;
+
+        }
+        .form-control:focus, .form-select:focus{
+            background-color: var(--bs-tertiary-bg);
+            color: var(--bs-body-color);
+            border-color: var(--bs-primary);
+            box-shadow: 0 0 0 0.25 var(--bs-primary-rgb, 0.25);
+
+        }
+        .form-control::placeholder{
+            color: var(--bs-secondary);
+        }
+
+        /*button styles*/
+        .btn-primary {
+        background-color: var(--bs-primary);
+        border-color: var(--bs-primary);
+        color: #000; /* Dark text on primary button */
+    }
+    .btn-primary:hover {
+        background-color: #d0b0ff; /* Lighter primary on hover */
+        border-color: #d0b0ff;
+        color: #000;
+    }
+    .btn-success {
+        background-color: var(--bs-success);
+        border-color: var(--bs-success);
+        color: #000; /* Dark text on success */
+    }
+    .btn-success:hover {
+        background-color: #1de9b6; /* Lighter success on hover */
+        border-color: #1de9b6;
+        color: #000;
+    }
+    .btn-outline-primary {
+        color: var(--bs-primary);
+        border-color: var(--bs-primary);
+    }
+    .btn-outline-primary:hover {
+        background-color: var(--bs-primary);
+        color: #000;
+    }
+    .btn-outline-danger {
+        color: var(--bs-danger);
+        border-color: var(--bs-danger);
+    }
+    .btn-outline-danger:hover {
+        background-color: var(--bs-danger);
+        color: #000;
+    }
+    .btn-outline-secondary {
+        color: var(--bs-secondary);
+        border-color: var(--bs-secondary);
+    }
+    .btn-outline-secondary:hover {
+        background-color: var(--bs-secondary);
+        color: #000;
+    }
+
+    /* Text & Badges */
+    .text-danger {
+        color: var(--bs-danger) !important;
+    }
+    .text-muted {
+        color: var(--bs-secondary) !important;
+    }
+    
+    .badge.bg-primary { background-color: var(--bs-primary) !important; color: #000 !important; }
+    .badge.bg-success { background-color: var(--bs-success) !important; color: #000 !important; }
+    .badge.bg-danger { background-color: var(--bs-danger) !important; }
+    .badge.bg-warning { background-color: var(--bs-warning) !important; color: #000 !important; }
+    .badge.bg-info { background-color: var(--bs-info) !important; color: #000 !important; }
+    .badge.bg-secondary { background-color: var(--bs-secondary) !important; }
+    
+
+    /* --- Navigation --- */
+    .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 15px;
+        border-bottom: 1px solid var(--bs-border-color);
+        background-color: var(--bs-card-bg); /* Match card background */
+    }
+    .top-bar h5 {
+        margin: 0;
+        font-weight: bold;
+        color: var(--bs-primary); /* Highlight the title */
+    }
+
+    .bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--bs-card-bg); /* Dark background */
+        border-top: 1px solid var(--bs-border-color);
+        z-index: 1000;
+    }
+    .bottom-nav .nav-link {
+        color: var(--bs-secondary); /* Muted color for inactive */
+        font-size: 1.3rem;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+    .bottom-nav .nav-link:hover {
+        color: var(--bs-body-color); /* Lighter on hover */
+    }
+    .bottom-nav .nav-link.active { /* Use 'active' not 'activate' */
+        color: var(--bs-primary); /* Primary color for active */
+    }
+    .bottom-nav .small {
+        font-size: 0.7rem !important; /* Ensure small text size */
+        margin-top: 0.1rem; /* Space between icon and text */
+    }
+
+    /* --- Scrollbar (Optional, for better dark theme feel) --- */
+    /* Webkit browsers */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+        background: var(--bs-body-bg);
+    }
+    ::-webkit-scrollbar-thumb {
+        background: var(--bs-secondary);
+        border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--bs-primary);
+    }
+    /* Firefox */
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: var(--bs-secondary) var(--bs-body-bg);
+    }
+
+
+
+
+    .welcome-card {
+        border-left: 4px solid var(--bs-primary);
+        border-radius: 12px;
+        background-color: rgba(0, 0, 0, 0.5); /* Slightly transparent overlay */
+        padding: 1rem;
+    }
+    .summary-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 12px;
+        border: none;
+        background-color: rgba(0, 0, 0, 0.8); /* Darker card background */
+        color: var(--bs-body-color);
+    }
+    .summary-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2) !important;
+    }
+    .counter {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #fff; /* Ensure counters are white */
+    }
+    .status-badge {
+        border-radius: 6px;
+        padding: 0.4em 0.8em;
+        font-size: 0.85rem;
+    }
+    .chart-container {
+        position: relative;
+        height: 300px;
+    }
+    .chart-container canvas {
+        height: 100% !important;
+        width: 100% !important;
+    }
+    .recent-apps-table th {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-top: none;
+        color: var(--bs-body-color);
+    }
+    .recent-apps-table td {
+        vertical-align: middle;
+        color: var(--bs-body-color);
+    }
+    .table-hover tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.03);
+        transform: scale(1.005);
+        transition: all 0.2s ease;
+    }
+    /* Chart.js Tooltip Style for Dark Theme */
+    .chartjs-tooltip {
+        background-color: rgba(0, 0, 0, 0.9)!important;
+        border-color: rgba(255, 255, 255, 0.2)!important;
+        border-radius: 6px;
+        color: #fff!important;
+        font-size: 0.875rem;
+        padding: 0.5rem;
+        opacity: 0.9;
+    }
+    .chartjs-tooltip-key {
+        margin-right: 0.5rem;
+    }
+    .chartjs-tooltip-body {
+        margin-bottom: 0.25rem;
+    }
+    /* Fade-in animation for counters (optional) */
+    .fade-in {
+        animation: fadeIn 0.8s ease-in forwards;
+        opacity: 0;
+    }
+    @keyframes fadeIn {
+        to {
+            opacity: 1;
+        }
+    }
+
+    .job-detail-section {
+        margin-bottom: 1.5rem;
+    }
+    .job-detail-section .card-header {
+        font-weight: 600;
+        background-color: rgba(0, 0, 0, 0.05); /* Slightly darker header */
+        border-bottom: 1px solid var(--bs-border-color);
+    }
+    .detail-label {
+        font-weight: 500;
+        color: var(--bs-body-color); /* Ensure label text is correct color */
+    }
+    .detail-value {
+        color: var(--bs-body-color); /* Ensure value text is correct color */
+    }
+    .status-badge-lg {
+        font-size: 1rem;
+        padding: 0.5em 1em;
+        border-radius: 8px;
+    }
+    .history-item {
+        border-bottom: 1px solid var(--bs-border-color);
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+    }
+    .history-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+    .interview-table th {
+        background-color: rgba(0, 0, 0, 0.05);
+        color: var(--bs-body-color);
+        border-top: none;
+    }
+    .interview-table td {
+        color: var(--bs-body-color);
+        vertical-align: middle;
+    }
+    .table-hover tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.03); /* Subtle hover background */
+    }
+    .action-buttons .btn {
+        margin-bottom: 0.5rem;
+    }
+    @media (min-width: 768px) {
+        .action-buttons .btn {
+            margin-bottom: 0;
+        }
+    }
+
+
+    .job-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border-radius: 12px; /* Slightly larger radius */
+        background-color: var(--bs-card-bg); /* Use theme card background */
+        border: 1px solid var(--bs-card-border-color); /* Use theme border color */
+        color: var(--bs-body-color); /* Ensure text color matches theme */
+    }
+    .job-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25) !important; /* Darker shadow for theme */
+    }
+    .search-bar-container {
+        border-radius: 8px; /* Rounded corners for search bar */
+        overflow: hidden; /* Ensures rounded corners are applied to children */
+    }
+    .no-jobs-message {
+        background-color: rgba(0, 0, 0, 0.05); /* Slightly darker background for message */
+        border-radius: 8px;
+        padding: 2rem;
+    }
+
+    .analysis-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border-radius: 12px;
+        background-color: var(--bs-card-bg);
+        border: 1px solid var(--bs-card-border-color);
+        color: var(--bs-body-color);
+        margin-bottom: 1.5rem;
+    }
+    .analysis-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25) !important;
+    }
+    .score-display {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: var(--bs-primary);
+    }
+    .keyword-list li {
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--bs-border-color);
+        border-radius: 6px;
+        margin-bottom: 0.5rem;
+        padding: 0.5rem 1rem;
+    }
+    .suggestions-box {
+        background-color: rgba(0, 0, 0, 0.05);
+        border-radius: 8px;
+        padding: 1rem;
+        border-left: 4px solid var(--bs-info);
+    }
+    .chart-container {
+        position: relative;
+        height: 220px; /* Fixed height for doughnut chart */
+        width: 100%;
+    }
+    .chart-container canvas {
+        height: 100% !important;
+        width: 100% !important;
+    }
+    @media (max-width: 767.98px) {
+        .score-display {
+            font-size: 2rem;
+        }
+        .chart-container {
+            height: 180px; /* Slightly smaller on mobile */
+        }
+    }
