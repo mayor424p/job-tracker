@@ -21,12 +21,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-hp#q5=vc!r(3n!rdwm8gs@61_+48^8qj5)ib#+diff*57!_gb_'
+SECRET_KEY = os.environ.get(
+    'SECRET_KEY'
+    'django-insecure-hp#q5=vc!r(3n!rdwm8gs@61_+48^8qj5)ib#+diff*57!_gb_'
+) 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = 'RENDER'
+    
 
 ALLOWED_HOSTS = []
+if 'RENDER' in os.environ:
+    ALLOWED_HOSTS.append(os.environ.get('RENDER_EXTERNAL_HOSTNAME')) 
 
 
 # Application definition
@@ -82,6 +88,22 @@ DATABASES = {
     }
 }
 
+if 'RENDER' in os.environ:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql', # <-- Changed engine
+            'NAME': os.environ.get('DB_NAME'),        # <-- From Render DB service
+            'USER': os.environ.get('DB_USER'),        # <-- From Render DB service
+            'PASSWORD': os.environ.get('DB_PASSWORD'),# <-- From Render DB service
+            'HOST': os.environ.get('DB_HOST'),        # <-- From Render DB service
+            'PORT': os.environ.get('DB_PORT', '5432'), # Default PostgreSQL port
+             'OPTIONS': {
+                'sslmode': 'require', # Often required by Render
+            },
+        }
+
+    }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -130,7 +152,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT =  os.path.join(BASE_DIR, 'mediafiles')
 
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'home'

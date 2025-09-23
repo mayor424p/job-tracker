@@ -1,0 +1,9 @@
+# requirements.txt
+Django>=5.2.6
+django-widget-tweaks
+python-docx
+PyPDF2
+# psycopg2-binary is needed for PostgreSQL on Render
+psycopg2-binary
+# Gunicorn is a production WSGI server (needed for Render)
+gunicorn
