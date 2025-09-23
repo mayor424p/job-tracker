@@ -1,0 +1,426 @@
+
+{% extends "core/base.html" %}
+{% block content %}
+<style>
+    /* --- Dashboard Specific Styles (Leveraging base theme) --- */
+    .welcome-card {
+        border-left: 4px solid var(--bs-primary);
+        border-radius: 12px;
+        background-color: rgba(0, 0, 0, 0.5); /* Slightly transparent overlay */
+        padding: 1rem;
+    }
+    .summary-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 12px;
+        border: none;
+        background-color: rgba(0, 0, 0, 0.8); /* Darker card background */
+        color: var(--bs-body-color);
+    }
+    .summary-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2) !important;
+    }
+    .counter {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #fff; /* Ensure counters are white */
+    }
+    .status-badge {
+        border-radius: 6px;
+        padding: 0.4em 0.8em;
+        font-size: 0.85rem;
+    }
+    .chart-container {
+        position: relative;
+        height: 300px;
+    }
+    .chart-container canvas {
+        height: 100% !important;
+        width: 100% !important;
+    }
+    .recent-apps-table th {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-top: none;
+        color: var(--bs-body-color);
+    }
+    .recent-apps-table td {
+        vertical-align: middle;
+        color: var(--bs-body-color);
+    }
+    .table-hover tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.03);
+        transform: scale(1.005);
+        transition: all 0.2s ease;
+    }
+    /* Chart.js Tooltip Style for Dark Theme */
+    .chartjs-tooltip {
+        background-color: rgba(0, 0, 0, 0.9)!important;
+        border-color: rgba(255, 255, 255, 0.2)!important;
+        border-radius: 6px;
+        color: #fff!important;
+        font-size: 0.875rem;
+        padding: 0.5rem;
+        opacity: 0.9;
+    }
+    .chartjs-tooltip-key {
+        margin-right: 0.5rem;
+    }
+    .chartjs-tooltip-body {
+        margin-bottom: 0.25rem;
+    }
+    /* Fade-in animation for counters (optional) */
+    .fade-in {
+        animation: fadeIn 0.8s ease-in forwards;
+        opacity: 0;
+    }
+    @keyframes fadeIn {
+        to {
+            opacity: 1;
+        }
+    }
+</style>
+
+<div class="container-fluid px-3 px-md-4 py-4">
+    <!-- Welcome Card -->
+    <div class="card shadow-sm mb-4 welcome-card">
+        <div class="card-body d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <div>
+                    <h4 class="mb-1">Welcome back, <span class="text-primary">{{ request.user.username|title }}</span>!</h4>
+                    <p class="text-muted mb-0">Here's your job application summary.</p>
+                </div>
+            </div>
+            <div class="d-flex gap-2 flex-wrap justify-content-center">
+                <a href="{% url 'add_job' %}" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-plus-circle me-1"></i> Add Job
+                </a>
+                <a href="{% url 'logout' %}" class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-box-arrow-right me-1"></i> Logout
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm summary-card border-start border-primary border-4 h-100">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <div class="text-primary mb-2"><i class="bi bi-briefcase-fill fs-3"></i></div>
+                    <p class="text-muted mb-1 small">Total Applications</p>
+                    <h4 class="fw-bold counter fade-in" data-target="{{ total }}">0</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm summary-card border-start border-info border-4 h-100">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <div class="text-info mb-2"><i class="bi bi-send-check-fill fs-3"></i></div>
+                    <p class="text-muted mb-1 small">Applied</p>
+                    <h4 class="fw-bold counter fade-in" data-target="{{ applied }}">0</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm summary-card border-start border-warning border-4 h-100">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <div class="text-warning mb-2"><i class="bi bi-calendar-event-fill fs-3"></i></div>
+                    <p class="text-muted mb-1 small">Interviews</p>
+                    <h4 class="fw-bold counter fade-in" data-target="{{ interview }}">0</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm summary-card border-start border-success border-4 h-100">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <div class="text-success mb-2"><i class="bi bi-award-fill fs-3"></i></div>
+                    <p class="text-muted mb-1 small">Offered</p>
+                    <h4 class="fw-bold counter fade-in" data-target="{{ offered }}">0</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="row g-4 mb-4">
+        <!-- Main Chart -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header fw-bold bg-transparent">Applications by Status</div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Side Charts Column -->
+        <div class="col-md-6">
+            <div class="row g-4 h-100">
+                <!-- Applications Over Time -->
+                <div class="col-md-12">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header fw-bold bg-transparent">Applications Over Time</div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="applicationsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Interviews Over Time -->
+                <div class="col-md-12">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header fw-bold bg-transparent">Interviews Over Time</div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="interviewsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Applications -->
+    <div class="card shadow-sm">
+        <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 bg-transparent">
+            <h5 class="mb-0">Recent Applications</h5>
+            <div class="d-flex gap-2 w-100 w-md-auto justify-content-end">
+                <a href="{% url 'job_list' %}" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-list-task me-1"></i> View All
+                </a>
+                <a href="{% url 'add_job' %}" class="btn btn-sm btn-outline-success">
+                    <i class="bi bi-plus-circle me-1"></i> Add New
+                </a>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover table-borderless align-middle mb-0 recent-apps-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Role</th>
+                        <th scope="col">Company</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Date Applied</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for job in recent_jobs %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'job_detail' job.pk %}" class="text-decoration-none">
+                                {{ job.role }}
+                            </a>
+                        </td>
+                        <td>{{ job.company }}</td>
+                        <td>
+                            {% if job.status == "applied" %}
+                                <span class="badge bg-info status-badge">Applied</span>
+                            {% elif job.status == "interview" %}
+                                <span class="badge bg-warning status-badge">Interview</span>
+                            {% elif job.status == "offered" %}
+                                <span class="badge bg-success status-badge">Offered</span>
+                            {% elif job.status == "rejected" %}
+                                <span class="badge bg-danger status-badge">Rejected</span>
+                            {% else %}
+                                <span class="badge bg-secondary status-badge">{{ job.get_status_display }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ job.date_applied|date:"M d, Y" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">No recent applications</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{{ statuses|json_script:"statuses-data"}}
+{{ counts|json_script:"counts-data" }}
+{{ months|json_script:"months-data" }}
+{{ month_counts|json_script:"months-counts-data" }}
+{{ interview_months|json_script:"interview-months-data" }}
+{{ interview_data|json_script:"interview-data" }}
+
+<script>
+    // --- Data Parsing ---
+    const statuses = JSON.parse(document.getElementById('statuses-data').textContent);
+    const counts = JSON.parse(document.getElementById('counts-data').textContent);
+    const months = JSON.parse(document.getElementById('months-data').textContent);
+    const monthCounts = JSON.parse(document.getElementById('months-counts-data').textContent);
+    const interviewMonths = JSON.parse(document.getElementById('interview-months-data').textContent);
+    const interviewData = JSON.parse(document.getElementById('interview-data').textContent);
+
+    // --- Chart Initialization ---
+    document.addEventListener('DOMContentLoaded', function () {
+        // --- Status Pie Chart ---
+        const statusCtx = document.getElementById('statusChart');
+        if (statusCtx) {
+            new Chart(statusCtx, {
+                type: 'pie',
+                data: {
+                    labels: statuses,
+                    datasets: [{
+                        data: counts,
+                        backgroundColor: [
+                            getComputedStyle(document.documentElement).getPropertyValue('--bs-primary'),
+                            getComputedStyle(document.documentElement).getPropertyValue('--bs-warning'),
+                            getComputedStyle(document.documentElement).getPropertyValue('--bs-success'),
+                            getComputedStyle(document.documentElement).getPropertyValue('--bs-danger')
+                        ],
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#fff'
+                            }
+                        }
+                    },
+                    scales: {
+                        // Ensure the pie chart doesn't have a border
+                    }
+                }
+            });
+        }
+
+        // --- Applications Over Time Line Chart ---
+        const appsCtx = document.getElementById('applicationsChart');
+        if (appsCtx) {
+            new Chart(appsCtx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Applications',
+                        data: monthCounts,
+                        borderColor: getComputedStyle(document.documentElement).getPropertyValue('--bs-primary'),
+                        backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                                color: '#fff'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#fff'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#fff'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- Interviews Over Time Bar Chart ---
+        const interviewsCtx = document.getElementById('interviewsChart');
+        if (interviewsCtx) {
+            new Chart(interviewsCtx, {
+                type: 'bar',
+                data: {
+                    labels: interviewMonths,
+                    datasets: [{
+                        label: 'Interviews',
+                        data: interviewData,
+                        backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--bs-success')
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                                color: '#fff'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#fff'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#fff'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- Counter Animation ---
+        document.querySelectorAll('.counter').forEach(counter => {
+            const targetRaw = counter.getAttribute('data-target') ?? '0';
+            const target = Number(targetRaw);
+            if (!Number.isFinite(target) || target <= 0) {
+                counter.textContent = String(Math.max(0, Math.floor(target)));
+                counter.classList.remove('fade-in');
+                counter.style.opacity = '1';
+                return;
+            }
+            const duration = 1000;
+            const start = performance.now();
+            const animate = (now) => {
+                const elapsed = now - start;
+                const progress = Math.min(elapsed / duration, 1);
+                const current = Math.round(progress * target);
+                counter.textContent = current.toLocaleString();
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    counter.textContent = target.toLocaleString();
+                }
+            };
+            requestAnimationFrame(animate);
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,194 @@
+<!-- core/templates/core/resume_analysis.html -->
+{% extends "core/base.html" %}
+{% block content %}
+<style>
+    /* --- Resume Analysis Specific Styles (Leveraging base theme) --- */
+    .analysis-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border-radius: 12px;
+        background-color: var(--bs-card-bg);
+        border: 1px solid var(--bs-card-border-color);
+        color: var(--bs-body-color);
+        margin-bottom: 1.5rem;
+    }
+    .analysis-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25) !important;
+    }
+    .score-display {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: var(--bs-primary);
+    }
+    .keyword-list li {
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--bs-border-color);
+        border-radius: 6px;
+        margin-bottom: 0.5rem;
+        padding: 0.5rem 1rem;
+    }
+    .suggestions-box {
+        background-color: rgba(0, 0, 0, 0.05);
+        border-radius: 8px;
+        padding: 1rem;
+        border-left: 4px solid var(--bs-info);
+    }
+    .chart-container {
+        position: relative;
+        height: 220px; /* Fixed height for doughnut chart */
+        width: 100%;
+    }
+    .chart-container canvas {
+        height: 100% !important;
+        width: 100% !important;
+    }
+    @media (max-width: 767.98px) {
+        .score-display {
+            font-size: 2rem;
+        }
+        .chart-container {
+            height: 180px; /* Slightly smaller on mobile */
+        }
+    }
+</style>
+
+<div class="container py-4">
+    <!-- Page Title -->
+    <div class="text-center mb-4">
+        <h2 class="fw-bold text-primary">
+            <i class="bi bi-file-earmark-text me-2"></i> Resume Analyzer
+        </h2>
+        <p class="text-muted">Upload your resume and job description to check your match score</p>
+    </div>
+
+    <!-- Upload Form Card -->
+    <div class="card analysis-card mb-4">
+        <div class="card-header bg-transparent fw-bold">
+            <i class="bi bi-upload me-1"></i> Upload & Analyze
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="resume" class="form-label fw-semibold">Upload Resume (PDF/DOCX)</label>
+                    <input type="file" class="form-control" id="resume" name="resume" accept=".pdf,.docx" required>
+                </div>
+                <div class="mb-3">
+                    <label for="job_desc" class="form-label fw-semibold">Paste Job Description</label>
+                    <textarea class="form-control" id="job_desc" name="job_desc" rows="6" placeholder="Paste the job description here..." required></textarea>
+                </div>
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-search me-2"></i> Analyze Resume
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if analysis %}
+    <!-- Analysis Results Section -->
+    <h3 class="mt-4 mb-3 fw-bold text-center text-primary"><i class="bi bi-bar-chart-line me-2"></i>Analysis Results</h3>
+    
+    <div class="row g-4">
+        <!-- Match Score Card -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card analysis-card h-100 text-center">
+                <div class="card-header bg-transparent fw-bold">
+                    <i class="bi bi-percent me-1"></i> Match Score
+                </div>
+                <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                    <div class="chart-container">
+                        <canvas id="matchChart"></canvas>
+                    </div>
+                    <div class="score-display mt-3">{{ analysis.score }}%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Missing Keywords Card -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card analysis-card h-100">
+                <div class="card-header bg-transparent fw-bold">
+                    <i class="bi bi-key me-1"></i> Missing Keywords
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush keyword-list">
+                        {% for word in analysis.missing_keywords %}
+                            <li class="list-group-item bg-transparent text-light">{{ word }}</li>
+                        {% empty %}
+                            <li class="list-group-item bg-transparent text-muted">No missing keywords found. Great!</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Suggestions Card -->
+        <div class="col-lg-4 col-md-12">
+            <div class="card analysis-card h-100">
+                <div class="card-header bg-transparent fw-bold">
+                    <i class="bi bi-lightbulb me-1"></i> Suggestions
+                </div>
+                <div class="card-body">
+                    <div class="suggestions-box">
+                        <p class="mb-0">{{ analysis.suggestions }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Start Again Button -->
+    <div class="text-center mt-4">
+        <a href="{% url 'resume_analysis' %}" class="btn btn-outline-secondary btn-lg">
+             <i class="bi bi-arrow-clockwise me-2"></i> Analyze Another
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{{ analysis.score|json_script:"scoreData" }}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const scoreElement = document.getElementById('scoreData');
+        if (scoreElement) {
+            const score = JSON.parse(scoreElement.textContent);
+            const ctx = document.getElementById('matchChart');
+
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Match', 'Gap'],
+                        datasets: [{
+                            data: [score, 100 - score],
+                            backgroundColor: [
+                                getComputedStyle(document.documentElement).getPropertyValue('--bs-success'), // Match
+                                getComputedStyle(document.documentElement).getPropertyValue('--bs-danger')   // Gap
+                            ],
+                            borderColor: '#fff',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false, // Important with fixed container height
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: getComputedStyle(document.documentElement).getPropertyValue('--bs-body-color') // Legend text color
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    });
+</script>
+{% endblock %}

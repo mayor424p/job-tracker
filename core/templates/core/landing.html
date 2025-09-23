@@ -1,0 +1,214 @@
+<!-- core/templates/core/landing.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Tracker</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+  <style>
+    :root {
+      /* Define dark theme colors similar to base.html for consistency */
+      --bg-dark: #121212;
+      --bg-card-dark: #1e1e1e;
+      --text-primary: #e0e0e0;
+      --text-secondary: #9e9e9e;
+      --primary-color: #bb86fc;
+      --primary-hover: #d0b0ff;
+      --footer-bg: #1a1a1a;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+    }
+
+    /* Hero Section */
+    .hero {
+      /* Use a professional business image */
+      background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                  url("https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1950&q=80") center/cover no-repeat;
+      color: #fff;
+      padding: 6rem 2rem;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: bold;
+    }
+    .hero p {
+      font-size: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Buttons in Hero */
+    .hero .btn-light {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: #000; /* Dark text */
+    }
+    .hero .btn-light:hover {
+        background-color: var(--primary-hover);
+        border-color: var(--primary-hover);
+        color: #000;
+    }
+    .hero .btn-outline-light {
+        color: var(--text-primary);
+        border-color: var(--text-primary);
+    }
+    .hero .btn-outline-light:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-color: var(--text-primary);
+        color: var(--text-primary);
+    }
+
+    @media (max-width: 768px){
+        .hero {
+            padding: 4rem 1rem;
+        }
+        .hero h1 {
+            font-size: 2rem;
+        }
+        .hero p {
+            font-size: 1rem;
+        }
+        .hero a {
+            display: block;
+            margin: 0.5rem auto;
+            width: 80%;
+        }
+    }
+
+    /* Features */
+    .feature-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      background-color: var(--bg-card-dark);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      border-radius: 12px; /* Slightly rounded */
+    }
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25); /* Darker shadow */
+    }
+    .feature-card .card-title {
+        color: var(--primary-color); /* Use primary color for titles */
+    }
+    .feature-card .card-text {
+        color: var(--text-secondary); /* Use secondary text color */
+    }
+
+    /* CTA Section */
+    .cta-section {
+        background-color: var(--bg-card-dark); /* Use card background color */
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .cta-section h2 {
+        color: var(--primary-color);
+    }
+
+    /* Footer */
+    footer {
+      background-color: var(--footer-bg);
+      color: var(--text-secondary);
+      padding: 2rem 1rem;
+      text-align: center;
+      margin-top: 4rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    footer a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+    footer a:hover {
+        color: var(--primary-hover);
+        text-decoration: underline;
+    }
+
+    /* Ensure icons are visible */
+    .feature-icon {
+        font-size: 2rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <section class="hero">
+    <h1>Welcome to Job Tracker</h1>
+    <p>Stay organized, track applications, and land your dream job faster.</p>
+    <a href="{% url 'login' %}" class="btn btn-light btn-lg me-2">Login</a>
+    <a href="{% url 'signup' %}" class="btn btn-outline-light btn-lg">Sign Up</a>
+  </section>
+
+  <!-- Features Section -->
+  <section class="container py-5">
+    <div class="row text-center mb-4">
+      <h2 class="fw-bold">Why Use Job Tracker?</h2>
+      <p class="text-muted">All your job search tools in one place.</p>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card feature-card h-100 p-3 text-center">
+            <div class="feature-icon">
+                <i class="bi bi-journal-check"></i> <!-- Use Bootstrap Icons -->
+            </div>
+          <div class="card-body">
+            <h5 class="card-title">📌 Track Applications</h5>
+            <p class="card-text">Keep all your job applications organized with statuses and deadlines.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card feature-card h-100 p-3 text-center">
+            <div class="feature-icon">
+                <i class="bi bi-calendar-event"></i>
+            </div>
+          <div class="card-body">
+            <h5 class="card-title">📅 Manage Interviews</h5>
+            <p class="card-text">Log interview dates, notes, and outcomes so you’re always prepared.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card feature-card h-100 p-3 text-center">
+            <div class="feature-icon">
+                <i class="bi bi-file-earmark-text"></i>
+            </div>
+          <div class="card-body">
+            <h5 class="card-title">📑 Resume Analysis</h5>
+            <p class="card-text">Upload your resume and get instant feedback for better job matches.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="cta-section text-center py-5">
+    <div class="container">
+        <h2 class="fw-bold mb-3">Ready to take control of your career?</h2>
+        <a href="{% url 'signup' %}" class="btn btn-primary btn-lg">Get Started</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+        <p>&copy; 2025 Job Tracker | Built with ❤️ using Django & Bootstrap</p>
+        <p>
+        <a href="#">Privacy Policy</a> |
+        <a href="#">Terms of Service</a>
+        </p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

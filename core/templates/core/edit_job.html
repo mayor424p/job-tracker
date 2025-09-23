@@ -1,0 +1,103 @@
+<!-- core/templates/core/edit_job.html -->
+{% extends "core/base.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="container py-5"> <!-- Changed mt-5 to py-5 for consistent vertical padding -->
+    <div class="row justify-content-center">
+        <!-- Adjusted column sizes for better responsiveness and consistency -->
+        <div class="col-lg-7 col-md-9 col-sm-12">
+            <!-- Enhanced Card Styling using theme variables -->
+            <div class="card shadow-lg border-0 rounded-4">
+                <!-- Updated card header with theme-aware background -->
+                <div class="card-header bg-primary text-white text-center rounded-top-4">
+                    <h4 class="mb-0"><i class="bi bi-pencil-square me-2"></i> Edit Job Application</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <!-- Use Bootstrap grid for better label/input alignment if desired -->
+                        <div class="mb-3">
+                            <!-- Label styling inherited from base theme -->
+                            <label for="{{ form.role.id_for_label }}" class="form-label">{{ form.role.label }}</label>
+                            <!-- Input styling inherited from base theme via form-control class -->
+                            {{ form.role|add_class:"form-control"|attr:"placeholder:Job Role" }}
+                            {% if form.role.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.role.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.company.id_for_label }}" class="form-label">{{ form.company.label }}</label>
+                            {{ form.company|add_class:"form-control"|attr:"placeholder:Company Name" }}
+                             {% if form.company.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.company.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.source.id_for_label }}" class="form-label">{{ form.source.label }}</label>
+                            {{ form.source|add_class:"form-control"|attr:"placeholder:Job Source (e.g. LinkedIn, Indeed)" }}
+                             {% if form.source.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.source.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.date_applied.id_for_label }}" class="form-label">{{ form.date_applied.label }}</label>
+                            <!-- Date input styling inherited from base theme -->
+                            {{ form.date_applied|add_class:"form-control"|attr:"placeholder:Select Date" }}
+                             {% if form.date_applied.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.date_applied.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.status.id_for_label }}" class="form-label">{{ form.status.label }}</label>
+                            <!-- Select styling inherited from base theme via form-select class -->
+                            {{ form.status|add_class:"form-select" }}
+                             {% if form.status.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.status.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.notes.id_for_label }}" class="form-label">{{ form.notes.label }}</label>
+                            <!-- Textarea styling inherited from base theme -->
+                            {{ form.notes|add_class:"form-control"|attr:"placeholder:Additional notes"|attr:"rows:4" }} <!-- Increased rows slightly -->
+                             {% if form.notes.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.notes.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mt-4"> <!-- Responsive flex layout -->
+                            <!-- Back button using theme's outline-secondary -->
+                            <a href="{% url 'job_list' %}" class="btn btn-outline-secondary w-100 w-md-auto"> <!-- Full width on mobile -->
+                                <i class="bi bi-arrow-left-circle me-1"></i> Back to List
+                            </a>
+                            <!-- Submit button using theme's success color -->
+                            <button type="submit" class="btn btn-success px-4 w-100 w-md-auto"> <!-- Full width on mobile -->
+                                <i class="bi bi-check-circle me-1"></i> Update Job
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

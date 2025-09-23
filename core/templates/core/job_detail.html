@@ -1,0 +1,199 @@
+<!-- core/templates/core/job_detail.html -->
+{% extends "core/base.html" %}
+{% block content %}
+<style>
+    /* --- Job Detail Specific Styles (Leveraging base theme) --- */
+    .job-detail-section {
+        margin-bottom: 1.5rem;
+    }
+    .job-detail-section .card-header {
+        font-weight: 600;
+        background-color: rgba(0, 0, 0, 0.05); /* Slightly darker header */
+        border-bottom: 1px solid var(--bs-border-color);
+    }
+    .detail-label {
+        font-weight: 500;
+        color: var(--bs-body-color); /* Ensure label text is correct color */
+    }
+    .detail-value {
+        color: var(--bs-body-color); /* Ensure value text is correct color */
+    }
+    .status-badge-lg {
+        font-size: 1rem;
+        padding: 0.5em 1em;
+        border-radius: 8px;
+    }
+    .history-item {
+        border-bottom: 1px solid var(--bs-border-color);
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+    }
+    .history-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+    .interview-table th {
+        background-color: rgba(0, 0, 0, 0.05);
+        color: var(--bs-body-color);
+        border-top: none;
+    }
+    .interview-table td {
+        color: var(--bs-body-color);
+        vertical-align: middle;
+    }
+    .table-hover tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.03); /* Subtle hover background */
+    }
+    .action-buttons .btn {
+        margin-bottom: 0.5rem;
+    }
+    @media (min-width: 768px) {
+        .action-buttons .btn {
+            margin-bottom: 0;
+        }
+    }
+</style>
+
+<div class="container py-4">
+    <!-- Job Overview Card -->
+    <div class="card shadow-sm job-detail-section">
+        <div class="card-header bg-transparent">
+            <h5 class="mb-0"><i class="bi bi-briefcase me-2"></i> Job Overview</h5>
+        </div>
+        <div class="card-body">
+            <h3 class="card-title mb-3 text-primary">{{ job.role }} <span class="text-muted">at {{ job.company }}</span></h3>
+
+            <div class="row mb-3">
+                <div class="col-md-6 mb-2">
+                    <p class="mb-1 detail-label"><i class="bi bi-link-45deg me-1"></i> Source:</p>
+                    <p class="detail-value mb-0">{{ job.get_source_display|default:"Not specified" }}</p>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <p class="mb-1 detail-label"><i class="bi bi-calendar-event me-1"></i> Date Applied:</p>
+                    <p class="detail-value mb-0">{{ job.date_applied|date:"M d, Y"|default:"Not specified" }}</p>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6 mb-2">
+                    <p class="mb-1 detail-label"><i class="bi bi-bar-chart-steps me-1"></i> Status:</p>
+                    <p class="mb-0">
+                        {% if job.status == "applied" %}
+                            <span class="badge bg-info status-badge-lg">Applied</span>
+                        {% elif job.status == "interview" %} <!-- Corrected status -->
+                            <span class="badge bg-warning status-badge-lg">Interview</span>
+                        {% elif job.status == "offered" %}
+                            <span class="badge bg-success status-badge-lg">Offered</span>
+                        {% elif job.status == "rejected" %}
+                            <span class="badge bg-danger status-badge-lg">Rejected</span>
+                        {% else %}
+                            <span class="badge bg-secondary status-badge-lg">{{ job.get_status_display }}</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <p class="mb-1 detail-label"><i class="bi bi-journal-text me-1"></i> Notes:</p>
+                <p class="detail-value mb-0">{{ job.notes|default:"<span class='text-muted'>No notes added.</span>"|safe }}</p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex flex-column flex-md-row justify-content-start align-items-md-center gap-2 mt-4 action-buttons">
+                <a href="{% url 'edit_job' job.pk %}" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-pencil-square me-1"></i> Edit
+                </a>
+                <a href="{% url 'delete_job' job.pk %}" class="btn btn-sm btn-outline-danger">
+                    <i class="bi bi-trash me-1"></i> Delete
+                </a>
+                <a href="{% url 'job_list' %}" class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-arrow-left-circle me-1"></i> Back to Jobs
+                </a>
+                <a href="{% url 'add_interview' job.pk %}" class="btn btn-sm btn-outline-success ms-md-auto"> <!-- Align right on md+ -->
+                    <i class="bi bi-calendar-plus me-1"></i> Add Interview
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status History Card -->
+    <div class="card shadow-sm job-detail-section">
+        <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i> Status History</h5>
+            <span class="badge bg-secondary">{{ job.status_history.count }}</span>
+        </div>
+        <div class="card-body">
+            {% if job.status_history.all %}
+                {% for history in job.status_history.all %}
+                <div class="history-item">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+                        <div>
+                            <strong class="d-block mb-1">{{ history.changed_at|date:"M d, Y H:i" }}</strong>
+                            <div>
+                                <span class="text-muted small">from</span>
+                                <span class="badge bg-secondary">{{ history.get_old_status_display|default:"—" }}</span>
+                                <span class="mx-1">→</span>
+                                <span class="badge 
+                                    {% if history.new_status == 'applied' %} bg-info
+                                    {% elif history.new_status == 'interview' %} bg-warning <!-- Corrected status -->
+                                    {% elif history.new_status == 'offered' %} bg-success
+                                    {% elif history.new_status == 'rejected' %} bg-danger
+                                    {% else %} bg-primary {% endif %}">
+                                    {{ history.get_new_status_display }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    {% if history.note %}
+                        <small class="text-muted d-block mt-2"><i class="bi bi-chat-left-text me-1"></i> {{ history.note }}</small>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted text-center mb-0 py-3">No status changes recorded yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Interviews Card -->
+    <div class="card shadow-sm job-detail-section">
+        <div class="card-header bg-transparent d-flex flex-column flex-md-row justify-content-md-between align-items-md-center gap-2">
+            <h5 class="mb-0"><i class="bi bi-calendar-check me-2"></i> Interview Logs</h5>
+            <a href="{% url 'add_interview' job.pk %}" class="btn btn-sm btn-success w-100 w-md-auto mt-2 mt-md-0"> <!-- Full width on mobile -->
+                <i class="bi bi-plus-circle me-1"></i> Add Interview
+            </a>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 interview-table">
+                <thead>
+                    <tr>
+                        <th scope="col"><i class="bi bi-calendar-event me-1"></i> Date & Time</th>
+                        <th scope="col"><i class="bi bi-person me-1"></i> Interviewer</th>
+                        <th scope="col"><i class="bi bi-laptop me-1"></i> Mode</th>
+                        <th scope="col"><i class="bi bi-journal-text me-1"></i> Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for interview in job.interviews.all %}
+                    <tr>
+                        <td><strong>{{ interview.interview_date|date:"M d, Y H:i" }}</strong></td>
+                        <td>{{ interview.interviewer|default:"<span class='text-muted'>Not specified</span>"|safe }}</td>
+                        <td>
+                            <span class="badge bg-secondary">{{ interview.mode|default:"N/A" }}</span>
+                        </td>
+                        <td>
+                            <small class="text-muted">{{ interview.notes|default:"<span class='text-muted'>No notes</span>"|safe }}</small>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted py-3">No interviews logged yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

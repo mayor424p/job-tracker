@@ -1,0 +1,83 @@
+{% extends "core/base.html" %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="container py-5"> <!-- Changed mt-5 to py-5 for consistent vertical padding -->
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8 col-sm-12">
+            <!-- Enhanced Card Styling using theme variables -->
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-primary text-white text-center rounded-top-4">
+                    <h4 class="mb-0"><i class="bi bi-calendar-plus-fill me-2"></i> Add Interview</h4>
+                    <!-- Smaller job info below the title -->
+                    <small class="text-white-50 mt-1 d-block">{{ job.company }} - {{ job.role }}</small>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <!-- Interview Date -->
+                        <div class="mb-3">
+                            <label for="{{ form.interview_date.id_for_label }}" class="form-label">{{ form.interview_date.label }}</label>
+                            <!-- Use form-control class for styling, ensure datetime-local type -->
+                            {{ form.interview_date|add_class:"form-control"|attr:"type:datetime-local" }}
+                            {% if form.interview_date.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.interview_date.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Interviewer -->
+                        <div class="mb-3">
+                            <label for="{{ form.interviewer.id_for_label }}" class="form-label">{{ form.interviewer.label }}</label>
+                            <!-- Use form-control class for styling -->
+                            {{ form.interviewer|add_class:"form-control"|attr:"placeholder:Enter interviewer's name" }}
+                            {% if form.interviewer.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.interviewer.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Mode -->
+                        <div class="mb-3">
+                            <label for="{{ form.mode.id_for_label }}" class="form-label">{{ form.mode.label }}</label>
+                            <!-- Use form-control class for styling -->
+                            {{ form.mode|add_class:"form-control"|attr:"placeholder:e.g., Online, In-person, Phone" }}
+                            {% if form.mode.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.mode.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="mb-3">
+                            <label for="{{ form.notes.id_for_label }}" class="form-label">{{ form.notes.label }}</label>
+                            <!-- Use form-control class for styling, increase rows -->
+                            {{ form.notes|add_class:"form-control"|attr:"placeholder:Add interview notes..."|attr:"rows:4" }}
+                            {% if form.notes.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.notes.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mt-4"> <!-- Responsive flex layout -->
+                            <!-- Back link using theme's outline-secondary -->
+                            <a href="{% url 'job_detail' job.pk %}" class="btn btn-outline-secondary w-100 w-md-auto"> <!-- Full width on mobile -->
+                                <i class="bi bi-arrow-left-circle me-1"></i> Back to Job
+                            </a>
+                            <!-- Submit button using theme's primary color -->
+                            <button type="submit" class="btn btn-primary px-4 w-100 w-md-auto"> <!-- Full width on mobile -->
+                                <i class="bi bi-save me-1"></i> Save Interview
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

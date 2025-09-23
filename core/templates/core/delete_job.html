@@ -1,0 +1,47 @@
+{% extends "core/base.html" %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8 col-sm-12">
+            <!-- Use card classes from your base theme -->
+            <div class="card shadow-lg border-0 rounded-4">
+                <!-- Optional: Add a header -->
+                <div class="card-header bg-transparent text-center fw-bold fs-5 py-3">
+                    Confirm Deletion
+                </div>
+                <div class="card-body p-4 text-center"> <!-- Center text -->
+                    <!-- Use text-danger for emphasis, leveraging theme color -->
+                    <p class="lead mb-4"> <!-- lead class for slightly larger text -->
+                        Are you sure you want to delete
+                        <span class="text-primary fw-bold">{{ job.role }}</span>
+                        at <span class="text-primary fw-bold">{{ job.company }}</span>?
+                    </p>
+                    <p class="text-muted mb-4"> <!-- Add a warning message -->
+                        <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                        This action cannot be undone.
+                    </p>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <!-- Group buttons together -->
+                        <div class="d-flex flex-column flex-md-row justify-content-center gap-3 mt-2">
+                            <!-- Danger button, styled by base theme -->
+                            <button type="submit" class="btn btn-lg btn-danger">
+                                <i class="bi bi-trash me-1"></i> Yes, Delete
+                            </button>
+                            <!-- Secondary/Outline button for cancel, styled by base theme -->
+                            <a href="{% url 'job_detail' job.pk %}" class="btn btn-lg btn-outline-secondary">
+                                <i class="bi bi-x-circle me-1"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+                 <!-- Optional: Add a footer -->
+                 <div class="card-footer bg-transparent text-center py-3 text-muted small">
+                    <i class="bi bi-info-circle me-1"></i> Deleting this job will remove all associated data.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
