@@ -7,3 +7,5 @@ PyPDF2
 psycopg2-binary
 # Gunicorn is a production WSGI server (needed for Render)
 gunicorn
+
+python-dotenv
